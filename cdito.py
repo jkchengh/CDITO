@@ -9,7 +9,7 @@ def next_move(L, C, i, j, l):
     if j != n_minus1:
         (next_i, next_j) = (i, j + 1)
     else:
-        (next_i, next_j) = (i + 1, j + 2)
+        (next_i, next_j) = (i + 1, i + 2)
     # print("Constituent Kernel", next_i, "->", next_j, "for statuts (", i, j, l, ")")
     # compute constituent kernel for every conflict
     for c in C:
@@ -60,17 +60,34 @@ def phi_conflicts(L, Phi):
                 break
         # print("Conflict:", c, "for ", phi)
         if c: C.append(c)
-    print("Conflict:", C)
+    # print("Conflict:", C)
     return C
 
 
-def cdito(L, P, Phi):
+def conflicts2clauses(C):
+    Phi = []
+    for c in C:
+        phi = []
+        for (a, b) in c:
+            phi.append((b, a))
+        Phi.append(phi)
+    return Phi
+
+
+def cdito(L, P, Phi, h):
     n_minus1 = len(L) - 1
     while P:
         print("\n")
         print("L =", L)
         print("P =", P)
-        if phi_consistent(L, Phi): return L
+        # print("Phi = ", Phi)
+        if phi_consistent(L, Phi):
+            (h_consistent, Ch) = h(L)
+            if h_consistent:
+                print("Solution Found")
+                return L
+            else:
+                Phi = Phi + conflicts2clauses(Ch)
         (i, j, l) = P[-1]
         C = phi_conflicts(L, Phi)
         (next_i, next_j) = next_move(L, C, i, j, l)
@@ -91,4 +108,5 @@ def cdito(L, P, Phi):
                 if next_i == 2*n_minus1:
                     print("[Type 3] Update Parent's Status for Pruning")
                     P[-1] = (parent_i + 1, parent_i + 1, parent_l)
+    print("No Solution!")
     return []
