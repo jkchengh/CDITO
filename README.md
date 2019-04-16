@@ -1,6 +1,6 @@
 # CDITO
 
-This is a code repository of Conflict-directed Incremental Total Ordering
+This is a code repository of the algorithm Conflict-directed Incremental Total Ordering (CDITO)
 This repository is associated with the paper [_Efficiently Exploring Ordering Problems through Conflict-directed Search_](http://mers-papers.csail.mit.edu/Conference/2019/ICAPS19_Chen_CDITO/chen2019cdito.pdf). If you have any question, please email me at jkchen 'at' csail.mit.edu, or create an issue [here](https://github.com/jkchengh/CDITO/issues).
 
 ## Citation
