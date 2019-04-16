@@ -29,7 +29,7 @@ def next_move(L, C, i, j, l):
         # update the combined kernel
         if (n * next_i + next_j) < (n * cons_i + cons_j):
             (next_i, next_j) = (cons_i, cons_j)
-    print("Combined Kernel:", next_i, "->", next_j)
+    # print("Combined Kernel:", next_i, "->", next_j)
     return (next_i, next_j)
 
 
@@ -77,9 +77,9 @@ def conflicts2clauses(C):
 def cdito(L, P, Phi, h):
     n_minus1 = len(L) - 1
     while P:
-        print("\n")
-        print("L =", L)
-        print("P =", P)
+        # print("\n")
+        # print("L =", L)
+        # print("P =", P)
         # print("Phi = ", Phi)
         if phi_consistent(L, Phi):
             (h_consistent, Ch) = h(L)
@@ -95,18 +95,18 @@ def cdito(L, P, Phi, h):
             L = move(L, next_i, next_j)
             P[-1] = (next_i, next_j, l)
             P.append((0, 0, next_i))
-            print("[Type 1] Move to", L)
+            # print("[Type 1] Move to", L)
         else:
             P.pop()
             if P:
                 (parent_i, parent_j, parent_l) = P[-1]
                 L = move(L, parent_j, parent_i - 1)
-                print("Backtrack to", L, "by taking", "(" + repr(parent_j) + " ," + repr(parent_i - 1) + ")")
+                # print("Backtrack to", L, "by taking", "(" + repr(parent_j) + " ," + repr(parent_i - 1) + ")")
                 if l < next_i < 2 * n_minus1:
-                    print("[Type 2] Update Parent's Status for Moving to a Sibling")
+                    # print("[Type 2] Update Parent's Status for Moving to a Sibling")
                     P[-1] = (parent_i, next_j - 1, parent_l)
-                if next_i == 2*n_minus1:
-                    print("[Type 3] Update Parent's Status for Pruning")
+                if next_i == 2 * n_minus1:
+                    # print("[Type 3] Update Parent's Status for Pruning")
                     P[-1] = (parent_i + 1, parent_i + 1, parent_l)
     print("No Solution!")
     return []

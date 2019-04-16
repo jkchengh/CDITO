@@ -29,6 +29,3 @@ def tos(n):
                 L = move(L, parent_j, parent_i - 1)
                 print("Backtrack to", L, "by taking", "(" + repr(parent_j) + " ," + repr(parent_i - 1) + ")")
     return O
-
-
-
