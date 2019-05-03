@@ -4,17 +4,17 @@ from utils import move
 def next_move(L, C, i, j, l):
     n = len(L)
     n_minus1 = n - 1
-    # compute the constituent kernel for search status
-    # as the incumbent combined kenerl
+    # compute the resolving move for search status
+    # as the incumbent multiple-conflict resolving move
 
     if (n_minus1 * i + j >= n_minus1 * l):
         idx_l = L.index(l)
         (next_i, next_j) = (idx_l, idx_l + 1)
     elif (j < n_minus1):
         (next_i, next_j) = (i, j + 1)
-    else:
+    else: # j = n - 1
         (next_i, next_j) = (i + 1, i + 2)
-    print("Constituent Kernel", next_i, "->", next_j, "for statuts (", i, j, l, ")")
+    print("Single Conflict Resolving Move", next_i, "->", next_j, "for statuts (", i, j, l, ")")
     # compute constituent kernel for every conflict
     for c in C:
         (cons_i, cons_j) = (n_minus1, n_minus1 + 1)
@@ -27,13 +27,13 @@ def next_move(L, C, i, j, l):
             # update the constituent kernel
             if (a <= l) and (n * idx_a + idx_b) < (n * cons_i + cons_j):
                 (cons_i, cons_j) = (idx_a, idx_b)
-        print("Constituent Kernel", cons_i, "->", cons_j, "for conflict", c)
+        print("Multiple Conflict Resolving Move", cons_i, "->", cons_j, "for conflict", c)
         # break when a unsolvable conflict is detected
         if cons_i > l: return (n_minus1, n_minus1 + 1)
-        # update the combined kernel
+        # update the Multiple-Conflict Resolving Move
         if (n * next_i + next_j) < (n * cons_i + cons_j):
             (next_i, next_j) = (cons_i, cons_j)
-    # print("Combined Kernel:", next_i, "->", next_j)
+    # print("Multiple Conflict Resolving Move:", next_i, "->", next_j)
     return (next_i, next_j)
 
 
@@ -98,23 +98,24 @@ def cdito(L, P, Phi, h):
         (i, j, l) = P[-1]
         C = phi_conflicts(L, Phi)
         (next_i, next_j) = next_move(L, C, i, j, l)
-        print("Combined Kernel:", next_i, "->", next_j)
+        print("Multiple Conflict Resolving Move:", next_i, "->", next_j)
         if next_i < l:
             L = move(L, next_i, next_j)
             P[-1] = (next_i, next_j, l)
             P.append((0, 0, next_i))
             print("[Type 1] Move to", L)
-        else:
+        elif l < next_i < n_minus1:
+            L = move(L, next_i,  next_j)
+            (parent_i, parent_j, parent_l) = P[-2]
+            P[-2] = (l, next_j, parent_l)
+            P[-1] = (0, 0, l)
+            print("[Type 2] Move to Sibling", L, "by taking", "(" + repr(next_i) + " ," + repr(next_j) + ")")
+        elif next_i == n_minus1:
             P.pop()
             if P:
                 (parent_i, parent_j, parent_l) = P[-1]
                 L = move(L, parent_j, parent_i - 1)
-                print("Backtrack to", L, "by taking", "(" + repr(parent_j) + " ," + repr(parent_i - 1) + ")")
-                if l < next_i < n_minus1:
-                    print("[Type 2] Update Parent's Status for Moving to a Sibling")
-                    P[-1] = (parent_i, next_j - 1, parent_l)
-                if next_i == n_minus1:
-                    print("[Type 3] Update Parent's Status for Pruning")
-                    P[-1] = (parent_i + 1, parent_i + 1, parent_l)
+                P[-1] = (parent_i + 1, parent_i + 1, parent_l)
+                print("[Type 3] Backtrack to", L, "by taking", "(" + repr(parent_j) + " ," + repr(parent_i - 1) + ")")
     print("No Solution!")
     return []
